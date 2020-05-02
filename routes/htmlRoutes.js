@@ -1,12 +1,15 @@
 var path = require("path");
 var router = require("express").Router();
 
-router.get("/notes", function (req, res){
-    res.sendFile(path.join(__dirname, "../public/notes.html"));
+// "/notes" responds with the notes.html file
+router.get("/notes", function (request, response) {
+  response.sendFile(path.join(__dirname, "../public/notes.html"));
 })
 
-router.get("*", function (req, res){
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+// the default route, should redirect every other route request to index.html
+router.get("*", function (request, response) {
+  response.sendFile(path.join(__dirname, "../public/index.html"));
 })
 
 module.exports = router;
+
