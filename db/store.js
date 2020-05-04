@@ -1,40 +1,52 @@
-const util = require('util')
-const fs = require('fs')
+const util = require("util");
+const fs = require("fs");
 
-const uuidv1 = require('uuid/v1')
+const readFileAsyn = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 
-const readFileAsync = util.promisify(fs.readFile)
-const writeFileAsync = util.promisify(fs.writeFile)
 
-class Store {
-  read() {
-    return readFileAsync("./db.json", "utf8")
-  }
+class Notes {
+    constructor() {
+        this.idDum = 0;
+    }
+    read() {
+        return readFileAsyn("db/db.json", "utf8");
 
-  write(note) {
-    return writeFileAsync("./db.json", JSON.stringify(note))
-  }
+    }
+    write(note) {
+        return writeFileAsync("db/db.json", JSON.stringify(note))
+    }
+    getNotes() {
+        console.log("get notes")
+        return this.read().then(notes => {
+            console.log(notes)
+            let notesArray;
+            try {
+                notesArray = [].concat(JSON.parse(notes));
+            }
+            catch (err) {
+                notesArray = [];
+            }
+            return notesArray;
+        })
 
-  getNotes() {
-    this.read().then(notes => {
-      // parse the JSON string and turn into an object
-      // add them to a list
-      // return that list (array)
-    })
-  }
+    }
+    addNotes(note) {
+        console.log("add notes");
+        const { title, text } = note;
+        const newNote = { title, text, id: ++this.idDum }
+        return this.getNotes()
+            .then(notes => [...notes, newNote])
+            .then(updateNotes => this.write(updateNotes))
+            .then(() => newNote)
 
-  addNote(note) {
-    // use the note argument
-    // create a new note object with your required fields (text, title, id)
-    // write that object to the json file
-  }
-
-  removeNote(id) {
-    // get all notes
-    // remove the note with the given id
-    // and return a list of notes that does NOT have that id (in essence the filtered list)
-  }
-
+    }
+    removeNote(id) {
+        console.log("remove notes");
+        return this.getNotes()
+            .then(notes => notes.filter(note => note.id !== parseInt(id)))
+            .then(updatedNotes => this.write(updatedNotes))
+    }
 }
 
-module.exports = new Store()
+module.exports = new Notes();
