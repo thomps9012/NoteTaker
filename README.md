@@ -2,7 +2,7 @@
 
 A note saving application that is deployed through heroku. The app allows the user to create and save notes to a SQL database and retrieves the notes using ajax api calls to the database. The notes are then rendered (using a unique note id) in a read only format and the user can then either view or delete the note. 
 
-![Alt text](./master/noteTaker.png?raw=true)
+![Alt text](./noteTaker.png?raw=true)
 
 ## Cloning the GitHub Repository
 You can directly clone the note taker repository by using git bash:
